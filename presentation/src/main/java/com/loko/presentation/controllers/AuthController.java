@@ -1,0 +1,55 @@
+package com.loko.presentation.controllers;
+
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.loko.applications.dto.ApiResponse;
+import com.loko.applications.dto.auth.AuthRequestDto;
+import com.loko.applications.dto.auth.AuthResponseDto;
+import com.loko.applications.ports.in.auth.AuthUseCase;
+import com.loko.domain.exception.UnauthorizeException;
+
+import jakarta.validation.Valid;
+
+
+@RestController
+@RequestMapping("${application.api.version}/auth")
+public class AuthController {
+    private final AuthUseCase authUseCase;
+
+    
+   
+    public AuthController(AuthUseCase authUseCase) {
+        this.authUseCase = authUseCase;
+    }
+
+
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<AuthResponseDto>> login(@Valid @RequestBody AuthRequestDto dto) {
+        return ResponseEntity.ok(ApiResponse.success(authUseCase.login(dto),200));
+    }
+    @PostMapping("/refresh-token")
+    public ResponseEntity<ApiResponse<AuthResponseDto>> refreshToken(@RequestBody Map<String,String> dto) {
+        if(!dto.containsKey("refreshToken")){
+            throw new UnauthorizeException("Invalid Refresh Token");
+        }
+        return ResponseEntity.ok(ApiResponse.success(authUseCase.refreshToken(dto.get("refreshToken")),200));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Object>> logout(Authentication authentication) {
+        if(authentication != null){
+            System.out.println("HAS SESSION");
+            authUseCase.logout(authentication.getName());
+        }
+        return ResponseEntity.ok(ApiResponse.success("Logged out successfully. Please delete your token on the client side.",200));
+    }
+    
+}
