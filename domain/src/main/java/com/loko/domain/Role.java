@@ -7,8 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Role {
-    private String id;
+public class Role extends BaseModel{
     private String name;
     private String description;
     private Set<RolePermission> permissions;

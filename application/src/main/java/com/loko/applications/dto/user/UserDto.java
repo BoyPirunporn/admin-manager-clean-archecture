@@ -1,5 +1,7 @@
 package com.loko.applications.dto.user;
 
+import java.time.LocalDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,5 +14,8 @@ public class UserDto{
         private String firstName;
         private String lastName;
         private boolean isActive;
+        private boolean isEmailVerify;
         private String role;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
 }

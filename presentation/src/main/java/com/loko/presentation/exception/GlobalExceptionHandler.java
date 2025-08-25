@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.loko.applications.dto.ApiBadRequest;
 import com.loko.applications.dto.ApiError;
+import com.loko.domain.exception.BadRequestException;
 import com.loko.domain.exception.DuplicateResourceException;
 import com.loko.domain.exception.ResourceNotFoundException;
 import com.loko.domain.exception.UnauthorizeException;
@@ -32,8 +33,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         System.out.println("EXCEPTION -> " + ex.getMessage());
         Map<String, List<String>> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(fieldError -> {
-            // ใช้ computeIfAbsent เพื่อสร้าง ArrayList ใหม่ถ้ายังไม่มี key นี้
-            // แล้วค่อย add message เข้าไป
+            
             errors.computeIfAbsent(fieldError.getField(), k -> new ArrayList<>())
                     .add(fieldError.getDefaultMessage());
         });
@@ -47,6 +47,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ApiError> handleResourceNotFound(ResourceNotFoundException ex) {
         ApiError response = new ApiError(ex.getMessage(), HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ApiError> handleBadRequest(BadRequestException ex) {
+        ApiError response = new ApiError(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DuplicateResourceException.class)

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.loko.applications.dto.ApiResponse;
+import com.loko.applications.dto.ApiResponseMessage;
 import com.loko.applications.dto.PageQuery;
 import com.loko.applications.dto.PagedResult;
 import com.loko.applications.dto.user.UserCreationDto;
@@ -53,8 +54,9 @@ public class UserController {
     
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserDto> create(@Valid @RequestBody UserCreationDto request) {
-        return ResponseEntity.ok(userUseCase.createUser(request));
+    public ResponseEntity<ApiResponseMessage> create(@Valid @RequestBody UserCreationDto request) {
+        userUseCase.createUser(request);
+        return ResponseEntity.ok(new ApiResponseMessage(201,"Your account has been created! Please check your email to verify your account before using the system."));
     }
 
 }

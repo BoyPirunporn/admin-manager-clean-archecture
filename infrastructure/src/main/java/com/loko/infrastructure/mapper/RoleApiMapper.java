@@ -15,5 +15,6 @@ public interface RoleApiMapper {
     @Mapping(target = "permissions", ignore = true)
     RoleDetailDto toRoleDetailDto(Role role);
 
+    @Mapping(target = "id",ignore = true)
     Role toRole(RoleCreationDto dto);
 }

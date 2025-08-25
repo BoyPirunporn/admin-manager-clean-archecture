@@ -23,6 +23,7 @@ import com.loko.applications.dto.role.RoleCreationDto;
 import com.loko.applications.dto.role.RoleDetailDto;
 import com.loko.applications.dto.role.RoleDto;
 import com.loko.applications.ports.in.role.RoleUseCase;
+import com.loko.presentation.helper.PageablePresenHelper;
 
 import jakarta.validation.Valid;
 
@@ -45,14 +46,8 @@ public class RoleController {
             @PageableDefault(size = 10, sort = "name") Pageable pageable,
             @RequestParam(required = false) String search) {
         // 1. แปลง Pageable (ภาษาของ Spring) ไปเป็น PageQuery (ภาษากลาง)
-        PageQuery query = new PageQuery(
-                pageable.getPageNumber(),
-                pageable.getPageSize(),
-                pageable.getSort().stream().findFirst().map(Sort.Order::getProperty).orElse("username"),
-                pageable.getSort().stream().findFirst().map(Sort.Order::getDirection).orElse(Sort.Direction.ASC).name(),
-                search);
 
-        return ResponseEntity.ok(roleUseCase.dataTables(query));
+        return ResponseEntity.ok(roleUseCase.dataTables(PageablePresenHelper.buildPageQuery(pageable, search)));
     }
 
     @GetMapping("{id}")

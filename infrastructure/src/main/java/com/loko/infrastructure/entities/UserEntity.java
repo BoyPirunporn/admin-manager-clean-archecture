@@ -1,5 +1,6 @@
 package com.loko.infrastructure.entities;
 
+import java.sql.Date;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +23,9 @@ public class UserEntity extends BaseEntity implements UserDetails {
     private String password;
     private String firstName;
     private String lastName;
-    private boolean isActive = true;
+    private boolean isActive = false;
+    private boolean isEmailVerify = false;
+    private Date verifyAt;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -103,4 +106,22 @@ public class UserEntity extends BaseEntity implements UserDetails {
         this.role = role;
     }
 
+    public boolean isEmailVerify() {
+        return isEmailVerify;
+    }
+
+    public void setEmailVerify(boolean isEmailVerify) {
+        this.isEmailVerify = isEmailVerify;
+    }
+
+    public Date getVerifyAt() {
+        return verifyAt;
+    }
+
+    public void setVerifyAt(Date verifyAt) {
+        this.verifyAt = verifyAt;
+    }
+
+    
+    
 }

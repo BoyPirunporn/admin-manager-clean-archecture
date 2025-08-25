@@ -13,11 +13,32 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         '[format_sql]': true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Bangkok
+  
+  mail:
+    host: smtp.mailtrap.io
+    port: 2525
+    username: username
+    password: password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+      
 logging:
   level:
     root: INFO
     
 application:
+    mail:
+      verify: 
+        expiry: 604800 # sec
+    frontend:
+      url=http://localhost:3000
     api:
         version: /api/v1
     security:
@@ -26,4 +47,4 @@ application:
         expiration: 900000
         refresh-token:
           expiration: 3600000
- 
+

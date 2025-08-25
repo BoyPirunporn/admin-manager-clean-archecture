@@ -10,13 +10,17 @@ import org.springframework.stereotype.Service;
 
 import com.loko.applications.dto.auth.AuthRequestDto;
 import com.loko.applications.dto.auth.AuthResponseDto;
+import com.loko.applications.dto.auth.ChangePasswordDto;
 import com.loko.applications.ports.in.auth.AuthUseCase;
 import com.loko.applications.ports.in.role.RoleUseCase;
 import com.loko.applications.ports.out.user.UserRepositoryPort;
 import com.loko.domain.User;
+import com.loko.domain.exception.BadRequestException;
+import com.loko.domain.exception.ResourceNotFoundException;
 import com.loko.domain.exception.UnauthorizeException;
 import com.loko.infrastructure.security.CustomUserDetails;
 import com.loko.infrastructure.security.JwtService;
+import com.loko.infrastructure.security.SecurityUtils;
 
 @Service
 public class AuthService implements AuthUseCase {
@@ -75,6 +79,16 @@ public class AuthService implements AuthUseCase {
         SecurityContextHolder.clearContext();
         logger.info("Evicting cache for user: {}", email);
 
+    }
+
+    @Override
+    public void changePassword(ChangePasswordDto dto) {
+        User user = userRepositoryPort.findByEmail(SecurityUtils.getCurrentUser().getEmail()).orElseThrow(() -> new ResourceNotFoundException("User not found in system."));
+        if(!passwordEncoder.matches(dto.currentPassword(), user.getPassword())){
+            throw new BadRequestException("Password is incorrect");
+        }
+        user.setPassword(passwordEncoder.encode(dto.newPassword()));
+        userRepositoryPort.save(user);
     }
 
 }

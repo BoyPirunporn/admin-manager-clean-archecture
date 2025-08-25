@@ -24,7 +24,7 @@ public class MenuController {
         this.menuUseCase = menuUseCase;
     }
     
-    @GetMapping
+    @GetMapping("/me")
     public ResponseEntity<ApiResponse<List<MenuPermissionNodeDto>>> getMenuWithRoleId() {
         return ResponseEntity.ok(ApiResponse.success(menuUseCase.getMenuByRoleId(), 200));
     }
