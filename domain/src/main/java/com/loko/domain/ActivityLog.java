@@ -11,4 +11,5 @@ public class ActivityLog extends BaseModel {
     private String target;
     private String metadata;
     private String ipAddress;
+    private String actionBy;
 }

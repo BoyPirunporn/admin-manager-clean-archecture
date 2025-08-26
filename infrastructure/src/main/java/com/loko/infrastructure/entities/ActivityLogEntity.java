@@ -25,6 +25,8 @@ public class ActivityLogEntity extends BaseEntity {
     @Column(length = 45)
     private String ipAddress;
 
+    private String actionBy;
+
     public UserEntity getUser() {
         return user;
     }
@@ -65,5 +67,14 @@ public class ActivityLogEntity extends BaseEntity {
         this.ipAddress = ipAddress;
     }
 
+    public String getActionBy() {
+        return actionBy;
+    }
+
+    public void setActionBy(String actionBy) {
+        this.actionBy = actionBy;
+    }
+
+    
     
 }

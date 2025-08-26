@@ -18,10 +18,10 @@ spring:
     time-zone: Asia/Bangkok
   
   mail:
-    host: smtp.mailtrap.io
-    port: 2525
-    username: username
-    password: password
+    host: smtp.gmail.com
+    port: 587
+    username: pirunporn02@gmail.com
+    password: papo msas efqr ycqx
     properties:
       mail:
         smtp:
@@ -30,15 +30,20 @@ spring:
             enable: true
       
 logging:
+  pattern:
+    console: "[%d{yyyy-MM-dd HH:mm:ss}] [ %-5level ] [ %logger{20} ] - %msg%n"
   level:
     root: INFO
+    org:
+      thymeleaf: INFO
     
 application:
     mail:
       verify: 
         expiry: 604800 # sec
+      email-template-path: /Users/prpasn/Desktop/Coding/clean-architecture/admin-manager/email-templates/
     frontend:
-      url=http://localhost:3000
+      url: http://localhost:3000/en/auth/verify-email
     api:
         version: /api/v1
     security:

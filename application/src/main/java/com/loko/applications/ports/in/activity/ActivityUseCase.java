@@ -7,5 +7,6 @@ import com.loko.applications.dto.activity.ActivityLogRequestDto;
 
 public interface ActivityUseCase {
     PagedResult<ActivityLogDto> dataTable(PageQuery query);
+    PagedResult<ActivityLogDto> dataTableByUserRoleLevelGreaterEqual(PageQuery query);
     ActivityLogDto create(ActivityLogRequestDto dto);
 }

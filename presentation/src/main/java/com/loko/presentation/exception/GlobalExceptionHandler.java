@@ -17,7 +17,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.loko.applications.dto.ApiBadRequest;
-import com.loko.applications.dto.ApiError;
+import com.loko.applications.dto.ApiBaseResponse;
 import com.loko.domain.exception.BadRequestException;
 import com.loko.domain.exception.DuplicateResourceException;
 import com.loko.domain.exception.ResourceNotFoundException;
@@ -44,29 +44,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiError> handleResourceNotFound(ResourceNotFoundException ex) {
-        ApiError response = new ApiError(ex.getMessage(), HttpStatus.NOT_FOUND.value());
+    public ResponseEntity<ApiBaseResponse> handleResourceNotFound(ResourceNotFoundException ex) {
+        ApiBaseResponse response = new ApiBaseResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ApiError> handleBadRequest(BadRequestException ex) {
-        ApiError response = new ApiError(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+    public ResponseEntity<ApiBaseResponse> handleBadRequest(BadRequestException ex) {
+        ApiBaseResponse response = new ApiBaseResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<ApiError> handleDuplicateResource(DuplicateResourceException ex) {
-        ApiError response = new ApiError(ex.getMessage(), HttpStatus.CONFLICT.value());
+    public ResponseEntity<ApiBaseResponse> handleDuplicateResource(DuplicateResourceException ex) {
+        ApiBaseResponse response = new ApiBaseResponse(ex.getMessage(), HttpStatus.CONFLICT.value());
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
     // A general handler for other unexpected errors
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleGenericException(Exception ex) {
+    public ResponseEntity<ApiBaseResponse> handleGenericException(Exception ex) {
         ex.printStackTrace();
         // Log the exception here for debugging purposes
         // logger.error("An unexpected error occurred", ex);
-        ApiError response = new ApiError("An internal server error occurred.",
+        ApiBaseResponse response = new ApiBaseResponse("An internal server error occurred.",
                 HttpStatus.INTERNAL_SERVER_ERROR.value());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -76,13 +76,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMessageNotReadable(
             HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
-        ApiError response = new ApiError("Invalid JSON request body ", HttpStatus.BAD_REQUEST.value());
+        ApiBaseResponse response = new ApiBaseResponse("Invalid JSON request body ", HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UnauthorizeException.class)
-    protected ResponseEntity<ApiError> unauthorize(UnauthorizeException ex) {
-        ApiError response = new ApiError(ex.getMessage(), HttpStatus.UNAUTHORIZED.value());
+    protected ResponseEntity<ApiBaseResponse> unauthorize(UnauthorizeException ex) {
+        ApiBaseResponse response = new ApiBaseResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED.value());
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 }

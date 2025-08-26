@@ -20,7 +20,7 @@ import jakarta.persistence.MappedSuperclass;
 
 public class BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @UuidGenerator
     private UUID id;
 

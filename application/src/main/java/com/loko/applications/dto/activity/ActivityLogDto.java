@@ -8,6 +8,7 @@ public record ActivityLogDto(
         String target,
         String metadata,
         String ipAddress,
+        String actionBy,
         LocalDateTime createdAt,
         LocalDateTime updatedAt) {
 }

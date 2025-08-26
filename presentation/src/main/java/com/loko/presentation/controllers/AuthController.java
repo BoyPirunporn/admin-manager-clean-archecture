@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.loko.applications.dto.ApiBaseResponse;
 import com.loko.applications.dto.ApiResponse;
-import com.loko.applications.dto.ApiResponseMessage;
 import com.loko.applications.dto.auth.AuthRequestDto;
 import com.loko.applications.dto.auth.AuthResponseDto;
 import com.loko.applications.dto.auth.ChangePasswordDto;
@@ -62,10 +62,10 @@ public class AuthController {
     }
 
     @PostMapping("/verify-email/{token}")
-    public ResponseEntity<ApiResponseMessage> postMethodName(
+    public ResponseEntity<ApiBaseResponse> postMethodName(
             @PathVariable(name = "token", required = true) String token) {
         verificationUseCase.verifyEmail(token);
-        return ResponseEntity.ok(new ApiResponseMessage(200, "Account has been verify."));
+        return ResponseEntity.ok(new ApiBaseResponse("Account verified! You can now use the system.",200));
     }
 
 }

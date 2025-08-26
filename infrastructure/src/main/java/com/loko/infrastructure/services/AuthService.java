@@ -58,7 +58,9 @@ public class AuthService implements AuthUseCase {
                 user.getLastName(),
                 null,
                 user.getRole().getName(),
-                roleUseCase.getRoleById(user.getRole().getId()).permissions());
+                user.isActive(),
+                user.isEmailVerify(),
+                roleUseCase.getRoleById(user.getRole().getId()).getPermissions());
 
     }
 

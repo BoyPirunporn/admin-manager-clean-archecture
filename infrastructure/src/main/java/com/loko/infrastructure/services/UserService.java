@@ -76,7 +76,7 @@ public class UserService implements UserUseCase {
         verificationTokenRepositoryPort.save(verificationToken);
 
         // send email
-        mailSender.sendVerificationEmail(saveUser.getEmail(), saveUser.getFirstName() + " " + saveUser.getLastName(), token);
+        mailSender.sendVerificationEmail("template-default",saveUser.getEmail(), saveUser.getFirstName() + " " + saveUser.getLastName(), token);
         
         return mapper.toUserDto(saveUser);
     }

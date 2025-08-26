@@ -27,6 +27,10 @@ public interface UserPersistenceMapper {
     @Named("toDomainAuthorities")
     default Collection<Object> toDomainAuthorities(RoleEntity role) {
         Collection<Object> authorities = new HashSet<>();
+
+        if (role == null) {
+            return authorities;
+        }
         authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName().replace(" ", "_").toUpperCase()));
         return authorities;
     }
@@ -34,6 +38,9 @@ public interface UserPersistenceMapper {
     @Named("toAuthorities")
     default Collection<GrantedAuthority> toAuthorities(Role role) {
         Collection<GrantedAuthority> authorities = new HashSet<>();
+        if (role == null) {
+            return authorities;
+        }
         authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName().replace(" ", "_").toUpperCase()));
         return authorities;
     }

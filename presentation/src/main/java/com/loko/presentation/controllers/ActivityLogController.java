@@ -5,6 +5,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -17,8 +19,6 @@ import com.loko.applications.dto.activity.ActivityLogDto;
 import com.loko.applications.dto.activity.ActivityLogRequestDto;
 import com.loko.applications.ports.in.activity.ActivityUseCase;
 import com.loko.presentation.helper.PageablePresenHelper;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("${application.api.version}/activity-logs")
@@ -34,7 +34,7 @@ public class ActivityLogController {
             @PageableDefault(size = 10, sort = "createdAt") Pageable pageable,
             @RequestParam(required = false) String search) {
                 PageQuery query = PageablePresenHelper.buildPageQuery(pageable,search);
-        return ResponseEntity.ok(activityUseCase.dataTable(query));
+        return ResponseEntity.ok(activityUseCase.dataTableByUserRoleLevelGreaterEqual(query));
     }
 
     @PostMapping()

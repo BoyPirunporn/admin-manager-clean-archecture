@@ -6,5 +6,6 @@ import com.loko.domain.ActivityLog;
 
 public interface ActivityRepositoryPort {
     PagedResult<ActivityLog> findPageable(PageQuery query);
+    PagedResult<ActivityLog> findPageableByUserRoleLevelGreaterThanEqual(PageQuery query);
     ActivityLog save(ActivityLog domain);
 }

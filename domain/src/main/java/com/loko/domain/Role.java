@@ -11,4 +11,5 @@ public class Role extends BaseModel{
     private String name;
     private String description;
     private Set<RolePermission> permissions;
+    private int level;
 }

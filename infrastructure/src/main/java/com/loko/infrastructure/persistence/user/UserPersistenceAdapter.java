@@ -32,7 +32,6 @@ public class UserPersistenceAdapter implements UserRepositoryPort {
     @Override
     public User save(User user) {
         UserEntity entity = mapper.toEntity(user);
-        System.out.println("ENTITY ROLE " + entity.getRole());
         UserEntity saveEntity = userJpaRepository.save(entity);
         return mapper.toDomain(saveEntity);
     }

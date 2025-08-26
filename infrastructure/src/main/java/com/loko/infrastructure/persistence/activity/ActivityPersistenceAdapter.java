@@ -47,13 +47,30 @@ public class ActivityPersistenceAdapter implements ActivityRepositoryPort {
                 pageResult.getSize(),
                 pageResult.isLast());
     }
+    @Override
+    public PagedResult<ActivityLog> findPageableByUserRoleLevelGreaterThanEqual(PageQuery query) {
+        Pageable pageable = PageableHelper.toPageable(query);
+
+        Page<ActivityLogEntity> pageResult = jpaRepository.findAllByUserRoleLevelGreaterThanEqual(pageable,SecurityUtils.getCurrentRole().getLevel());
+        List<ActivityLog> toDomains = pageResult.getContent().stream().map(mapper::toDomain).toList();
+
+        return new PagedResult<>(
+                toDomains,
+                pageResult.getTotalElements(),
+                pageResult.getTotalPages(),
+                pageResult.getNumber(),
+                pageResult.getSize(),
+                pageResult.isLast());
+    }
 
     @Override
     public ActivityLog save(ActivityLog domain) {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(SecurityUtils.getCurrentUser().getId());
+        userEntity.setEmail(SecurityUtils.getCurrentUser().getEmail());
         ActivityLogEntity activity = mapper.toEntity(domain);
         activity.setUser(userEntity);
+        activity.setActionBy(userEntity.getEmail());
         return mapper.toDomain(jpaRepository.save(activity));
     }
 

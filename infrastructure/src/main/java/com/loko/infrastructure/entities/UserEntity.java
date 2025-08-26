@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -23,7 +24,9 @@ public class UserEntity extends BaseEntity implements UserDetails {
     private String password;
     private String firstName;
     private String lastName;
+    @Column(nullable = false, name = "is_active", columnDefinition = "boolean  default false")
     private boolean isActive = false;
+    @Column(nullable = false, name = "is_email_verify",columnDefinition = "boolean default false")
     private boolean isEmailVerify = false;
     private Date verifyAt;
 
@@ -122,6 +125,4 @@ public class UserEntity extends BaseEntity implements UserDetails {
         this.verifyAt = verifyAt;
     }
 
-    
-    
 }

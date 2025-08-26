@@ -3,6 +3,7 @@ package com.loko.infrastructure.services;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.loko.applications.dto.PageQuery;
 import com.loko.applications.dto.PagedResult;
@@ -28,11 +29,25 @@ public class ActivityService implements ActivityUseCase {
 
 
     @Override
+    @Transactional(readOnly = true)
     public PagedResult<ActivityLogDto> dataTable(PageQuery query) {
         PagedResult<ActivityLog> pageResult = repositoryPort.findPageable(query);
 
         List<ActivityLogDto> toDtos = pageResult.data().stream().map(mapper::toDto).toList();
 
+        return new PagedResult<>(
+                toDtos,
+                pageResult.totalElements(),
+                pageResult.totalPages(),
+                pageResult.pageNumber(),
+                pageResult.pageSize(),
+                pageResult.isLast());
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public PagedResult<ActivityLogDto> dataTableByUserRoleLevelGreaterEqual(PageQuery query) {
+        PagedResult<ActivityLog> pageResult = repositoryPort.findPageableByUserRoleLevelGreaterThanEqual(query);
+        List<ActivityLogDto> toDtos = pageResult.data().stream().map(mapper::toDto).toList();
         return new PagedResult<>(
                 toDtos,
                 pageResult.totalElements(),

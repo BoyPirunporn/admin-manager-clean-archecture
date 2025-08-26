@@ -76,7 +76,7 @@ public class RoleService implements RoleUseCase {
             return permissionMapper.toPermissionNodeDto(p, null);
         }).collect(Collectors.toSet());
 
-        return new RoleDetailDto(role.getId(), role.getName(), role.getDescription(), permissionTree);
+        return new RoleDetailDto(role.getId(), role.getName(), role.getDescription(),role.getLevel(), permissionTree);
     }
 
     // private Set<PermissionNodeDto> buildPermissionTree(Set<RolePermission> permissions) {
