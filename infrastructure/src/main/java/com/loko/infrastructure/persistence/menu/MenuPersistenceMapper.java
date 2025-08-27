@@ -20,7 +20,8 @@ public interface MenuPersistenceMapper {
             return null;
         }
         Menu menu = new Menu();
-        menu.setTitle(parent.getTitle());
+        menu.setNameEN(parent.getNameEN());
+        menu.setNameTH(parent.getNameTH());
         menu.setId(parent.getId().toString());
         return menu;
     }

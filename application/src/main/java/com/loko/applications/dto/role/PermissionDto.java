@@ -2,7 +2,8 @@ package com.loko.applications.dto.role;
 
 public record PermissionDto(
         String menuId,
-        String menuTitle,
+        String menuNameEN,
+        String menuNameTH,
         String menuParentId,
         boolean canView,
         boolean canCreate,

@@ -9,7 +9,8 @@ import lombok.Setter;
 @Setter
 public class MenuDto {
     private String id;
-    private String title;
+    private String nameEN;
+    private String nameTH;
     private String url;
     private String icon;
     private boolean isGroup;

@@ -1,6 +1,8 @@
 package com.loko.initializer;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -8,10 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loko.applications.ports.out.menu.MenuRepositoryPort;
 import com.loko.applications.ports.out.role.RoleRepositoryPort;
 import com.loko.applications.ports.out.user.UserRepositoryPort;
@@ -54,7 +59,7 @@ public class DataInitializer implements CommandLineRunner {
         logger.info("[DataInitializer] Starting database initialization...");
         logger.info("============================================================");
 
-        createMenuIfNotFound();
+        createMenusIfNotFound();
         createRoleIfNotFound();
         createSuperUserIfNotFound();
 
@@ -63,23 +68,50 @@ public class DataInitializer implements CommandLineRunner {
         logger.info("============================================================");
     }
 
-    private void createMenuIfNotFound() {
+    private void createMenusIfNotFound() throws Exception {
         logger.info("[DataInitializer] Step 1: Checking for existing menus...");
         if (menuRepositoryPort.count() == 0) {
-            logger.info(" -> No menus found. Creating default menu structure...");
+            logger.info(" -> No menus found. Creating default menu structure from menus.json...");
 
-            menuRepositoryPort.save(new Menu("Dashboard", "/dashboard", "LayoutDashboard", true, true, 1));
-            Menu settings = menuRepositoryPort.save(new Menu("Settings", "/settings", "Settings", true, true, 2));
+            List<Map<String, Object>> menuData = readFileMenusFromResources();
+            saveMenusRecursively(menuData, null);
 
-            menuRepositoryPort.saveAll(
-                    List.of(
-                            new Menu("Members", "/settings/member", "Users", true, false, 1, settings),
-                            new Menu("Roles", "/settings/roles", "UserCog", true, false, 2, settings),
-                            new Menu("Logs", "/settings/logs", "History", true, false, 3, settings)));
             logger.info(" -> Default menus created successfully.");
-
         } else {
             logger.info(" -> Menus already exist. Skipping creation.");
+        }
+    }
+
+    private void saveMenusRecursively(List<Map<String, Object>> menuData, Menu parent) {
+        for (Map<String, Object> menuMap : menuData) {
+            // 1. Build the domain object from the map
+            Menu menuToSave =  new Menu();
+                menuToSave.setNameEN(menuMap.get("nameEN").toString()); // Assuming nameEN for now
+                menuToSave.setNameTH(menuMap.get("nameTH").toString()); // Assuming nameEN for now
+                menuToSave.setUrl(menuMap.get("url").toString()); // Assuming nameEN for now
+                menuToSave.setIcon(menuMap.get("icon").toString()); // Assuming nameEN for now
+                menuToSave.setGroup((Boolean) menuMap.get("isGroup")); // Assuming nameEN for now
+                menuToSave.setVisible((Boolean) menuMap.get("isVisible")); // Assuming nameEN for now
+                menuToSave.setDisplayOrder((Integer) menuMap.get("displayOrder")); // Assuming nameEN for now
+                menuToSave.setParent(parent); // Assuming nameEN for now
+
+            // 2. Save the parent menu first to get its ID
+            Menu savedParent = menuRepositoryPort.save(menuToSave);
+
+            // 3. If there are children, recursively save them with the newly saved parent
+            if (menuMap.containsKey("children")) {
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> childrenData = (List<Map<String, Object>>) menuMap.get("children");
+                saveMenusRecursively(childrenData, savedParent);
+            }
+        }
+    }
+
+    private List<Map<String, Object>> readFileMenusFromResources() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Resource resource = new ClassPathResource("menus.json");
+        try (InputStream inputStream = resource.getInputStream()) {
+            return objectMapper.readValue(inputStream, new TypeReference<>() {});
         }
     }
 
@@ -130,5 +162,7 @@ public class DataInitializer implements CommandLineRunner {
         }
         ;
     }
+
+   
 
 }

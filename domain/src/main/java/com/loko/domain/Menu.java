@@ -14,7 +14,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Menu extends BaseModel{
-    private String title;
+    private String nameEN;
+    private String nameTH;
     private String url;
     private String icon;
     private boolean isVisible;
@@ -23,8 +24,10 @@ public class Menu extends BaseModel{
     private Menu parent;
     private Set<Menu> children = new TreeSet<>(Comparator.comparingInt(Menu::getDisplayOrder));
     
-    public Menu(String title, String url, String icon, boolean isVisible, boolean isGroup, int displayOrder) {
-        this.title = title;
+    public Menu(String nameEN, String nameTH, String url, String icon, boolean isVisible, boolean isGroup,
+            int displayOrder) {
+        this.nameEN = nameEN;
+        this.nameTH = nameTH;
         this.url = url;
         this.icon = icon;
         this.isVisible = isVisible;
@@ -32,9 +35,10 @@ public class Menu extends BaseModel{
         this.displayOrder = displayOrder;
     }
 
-    public Menu(String title, String url, String icon, boolean isVisible, boolean isGroup, int displayOrder,
-            Menu parent) {
-        this.title = title;
+    public Menu(String nameEN, String nameTH, String url, String icon, boolean isVisible, boolean isGroup,
+            int displayOrder, Menu parent) {
+        this.nameEN = nameEN;
+        this.nameTH = nameTH;
         this.url = url;
         this.icon = icon;
         this.isVisible = isVisible;
@@ -42,6 +46,9 @@ public class Menu extends BaseModel{
         this.displayOrder = displayOrder;
         this.parent = parent;
     }
+    
+    
+    
 
     
 

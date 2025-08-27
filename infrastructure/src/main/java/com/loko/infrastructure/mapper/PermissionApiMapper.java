@@ -13,12 +13,14 @@ import com.loko.domain.RolePermission;
 @Mapper(componentModel = "spring",uses = {MenuApiMapper.class})
 public interface PermissionApiMapper{
     @Mapping(source = "menu.id", target = "menuId")
-    @Mapping(source = "menu.title", target = "menuTitle")
+    @Mapping(source = "menu.nameEN", target = "menuNameEN")
+    @Mapping(source = "menu.nameTH", target = "menuNameTH")
     @Mapping(source = "menu.parent.id",target = "menuParentId")
     PermissionDto toPermissionDto(RolePermission permission);
 
     @Mapping(source = "permission.menu.id", target = "menuId")
-    @Mapping(source = "permission.menu.title", target = "menuName")
+    @Mapping(source = "permission.menu.nameEN", target = "menuNameEN")
+    @Mapping(source = "permission.menu.nameTH", target = "menuNameTH")
     @Mapping(source = "permission.menu.url", target = "url")
     @Mapping(source = "permission.canView", target = "canView")
     @Mapping(source = "permission.canCreate", target = "canCreate")

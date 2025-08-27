@@ -4,7 +4,8 @@ import java.util.Set;
 
 public record PermissionNodeDto(
     String menuId,
-    String menuName,
+    String menuNameEN,
+    String menuNameTH,
     String url,
     boolean canView,
     boolean canCreate,

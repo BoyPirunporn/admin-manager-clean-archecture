@@ -50,7 +50,7 @@ application:
     mail:
       verify: 
         expiry: 604800 # sec
-      email-template-path: D:/me/admin-manager-clean-archecture/email-templates/
+      email-template-path: /Users/prpasn/Desktop/Coding/clean-architecture/admin-manager/email-templates/
     frontend:
       url: http://localhost:3000/en/auth/verify-email
     api:

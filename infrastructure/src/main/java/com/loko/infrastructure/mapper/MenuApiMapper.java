@@ -16,7 +16,8 @@ public interface MenuApiMapper {
     MenuDto toDto(Menu menu);
 
     @Mapping(source = "permission.menu.id", target = "menuId")
-    @Mapping(source = "permission.menu.title", target = "menuName")
+    @Mapping(source = "permission.menu.nameEN", target = "nameEN")
+    @Mapping(source = "permission.menu.nameTH", target = "nameTH")
     @Mapping(source = "permission.menu.url", target = "url")
     @Mapping(source = "permission.menu.icon", target = "icon")
     @Mapping(source = "permission.menu.group", target = "isGroup")

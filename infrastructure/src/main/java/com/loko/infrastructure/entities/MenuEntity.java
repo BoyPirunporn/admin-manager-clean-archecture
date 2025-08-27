@@ -2,6 +2,7 @@ package com.loko.infrastructure.entities;
 
 import java.util.Set;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
@@ -11,7 +12,10 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "menus")
 public class MenuEntity extends BaseEntity{
-    private String title;
+    @Column(name = "name_en",nullable = false)
+    private String nameEN;
+    @Column(name = "name_th",nullable = false)
+    private String nameTH;
     private String url;
     private String icon;
     private boolean isVisible = false;
@@ -25,15 +29,6 @@ public class MenuEntity extends BaseEntity{
     private Set<MenuEntity> children;
 
     
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getUrl() {
         return url;
     }
@@ -88,6 +83,24 @@ public class MenuEntity extends BaseEntity{
 
     public void setChildren(Set<MenuEntity> children) {
         this.children = children;
+    }
+
+  
+
+    public String getNameTH() {
+        return nameTH;
+    }
+
+    public void setNameTH(String nameTH) {
+        this.nameTH = nameTH;
+    }
+
+    public String getNameEN() {
+        return nameEN;
+    }
+
+    public void setNameEN(String nameEN) {
+        this.nameEN = nameEN;
     }
 
     

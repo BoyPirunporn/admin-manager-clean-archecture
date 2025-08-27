@@ -1,0 +1,58 @@
+[
+    {
+        "nameEN": "Dashboard",
+        "nameTH": "แดชบอร์ด",
+        "url": "/dashboard",
+        "icon": "LayoutDashboard",
+        "isGroup": false,
+        "isVisible": true,
+        "displayOrder": 1
+    },
+    {
+        "nameEN": "Settings",
+        "nameTH": "การตั้งการ",
+        "url": "/settings",
+        "icon": "Settings",
+        "isGroup": true,
+        "isVisible": true,
+        "displayOrder": 2,
+        "children": [
+            {
+                "nameEN": "Members",
+                "nameTH": "สมาชิก",
+                "url": "/settings/members",
+                "icon": "Users",
+                "isGroup": false,
+                "isVisible": true,
+                "displayOrder": 1
+            },
+            {
+                "nameEN": "Roles",
+                "nameTH": "จัดการสิทธิ์",
+                "url": "/settings/roles",
+                "icon": "UserCog",
+                "isGroup": false,
+                "isVisible": true,
+                "displayOrder": 2
+            },
+            {
+                "nameEN": "Systems",
+                "nameTH": "ระบบ",
+                "url": "/settings/systems",
+                "icon": "MonitorCog",
+                "isGroup": false,
+                "isVisible": true,
+                "displayOrder": 3
+            },
+            {
+                "nameEN": "Logs",
+                "nameTH": "ประวัติการใช้งาน",
+                "url": "/settings/activity-logs",
+                "icon": "History",
+                "isGroup": false,
+                "isVisible": true,
+                "displayOrder": 4
+            }
+        ]
+    }
+]

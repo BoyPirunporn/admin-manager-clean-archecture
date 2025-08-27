@@ -3,7 +3,6 @@ package com.loko.infrastructure.persistence.menu;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -21,11 +20,11 @@ import com.loko.infrastructure.helper.PageableHelper;
 import com.loko.infrastructure.repositories.MenuJpaRepository;
 
 @Component
-public class MenuPresistenceAdapter implements MenuRepositoryPort {
+public class MenuPersistenceAdapter implements MenuRepositoryPort {
     private final MenuJpaRepository jpaRepository;
     private final MenuPersistenceMapper mapper;
 
-    public MenuPresistenceAdapter(MenuJpaRepository jpaRepository, MenuPersistenceMapper mapper) {
+    public MenuPersistenceAdapter(MenuJpaRepository jpaRepository, MenuPersistenceMapper mapper) {
         this.jpaRepository = jpaRepository;
         this.mapper = mapper;
     }
@@ -61,7 +60,7 @@ public class MenuPresistenceAdapter implements MenuRepositoryPort {
 
         Page<MenuEntity> pageResult;
         if (query.searchTerm() != null && !query.searchTerm().isBlank()) {
-            pageResult = jpaRepository.findByParentIdIsNullAndTitleContainingIgnoreCaseOrderByDisplayOrderAsc(
+            pageResult = jpaRepository.findKeywordNameENOrNameTH(
                     query.searchTerm(), pageable);
         } else {
             pageResult = jpaRepository.findAll(pageable);
