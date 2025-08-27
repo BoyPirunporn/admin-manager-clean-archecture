@@ -1,39 +1,62 @@
-{
-    "properties": [
-        {
-            "name": "application.mail.verify.expiry",
-            "type": "java.lang.String",
-            "description": "A description for 'application.mail.verify.expiry'"
-        },
-        {
-            "name": "application.mail.email-template-path",
-            "type": "java.lang.String",
-            "description": "A description for 'application.mail.email-template-path'"
-        },
-        {
-            "name": "application.frontend.url",
-            "type": "java.lang.String",
-            "description": "A description for 'application.mail.frontend.url'"
-        },
-        {
-            "name": "application.api.version",
-            "type": "java.lang.String",
-            "description": "A description for 'application.api.version'"
-        },
-        {
-            "name": "application.security.jwt.secret-key",
-            "type": "java.lang.String",
-            "description": "A description for 'application.security.jwt.secret-key'"
-        },
-        {
-            "name": "application.security.jwt.expiration",
-            "type": "java.lang.Integer",
-            "description": "A description for 'application.security.jwt.expiration'"
-        },
-        {
-            "name": "application.security.jwt.refresh-token.expiration",
-            "type": "java.lang.Integer",
-            "description": "A description for 'application.security.jwt.refresh-token.expiration'"
-        }
-    ]
-}
+{"properties": [
+  {
+    "name": "application.mail.verify.expiry",
+    "type": "java.lang.String",
+    "description": "A description for 'application.mail.verify.expiry'"
+  },
+  {
+    "name": "application.mail.email-template-path",
+    "type": "java.lang.String",
+    "description": "A description for 'application.mail.email-template-path'"
+  },
+  {
+    "name": "application.frontend.url",
+    "type": "java.lang.String",
+    "description": "A description for 'application.mail.frontend.url'"
+  },
+  {
+    "name": "application.api.version",
+    "type": "java.lang.String",
+    "description": "A description for 'application.api.version'"
+  },
+  {
+    "name": "application.security.jwt.secret-key",
+    "type": "java.lang.String",
+    "description": "A description for 'application.security.jwt.secret-key'"
+  },
+  {
+    "name": "application.security.jwt.expiration",
+    "type": "java.lang.Integer",
+    "description": "A description for 'application.security.jwt.expiration'"
+  },
+  {
+    "name": "application.security.jwt.refresh-token.expiration",
+    "type": "java.lang.Integer",
+    "description": "A description for 'application.security.jwt.refresh-token.expiration'"
+  },
+  {
+    "name": "application.initial-data.default.super-role-name",
+    "type": "java.lang.String",
+    "description": "A description for 'application.initial-data.default.super-role-name'"
+  },
+  {
+    "name": "application.initial-data.default.user.email",
+    "type": "java.lang.String",
+    "description": "A description for 'application.initial-data.default.user.email'"
+  },
+  {
+    "name": "application.initial-data.default.user.password",
+    "type": "java.lang.String",
+    "description": "A description for 'application.initial-data.default.user.password'"
+  },
+  {
+    "name": "application.initial-data.default.user.firstName",
+    "type": "java.lang.String",
+    "description": "A description for 'application.initial-data.default.user.firstName'"
+  },
+  {
+    "name": "application.initial-data.default.user.lastName",
+    "type": "java.lang.String",
+    "description": "A description for 'application.initial-data.default.user.lastName'"
+  }
+]}

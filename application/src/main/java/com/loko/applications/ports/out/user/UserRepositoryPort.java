@@ -10,6 +10,7 @@ public interface UserRepositoryPort {
     User save(User user);
 
     boolean existsByEmail(String email);
+    boolean existsByRole_Name(String roleName);
 
     Optional<User> findByEmail(String email);
     Optional<User> findById(String id);

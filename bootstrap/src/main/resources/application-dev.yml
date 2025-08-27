@@ -38,10 +38,19 @@ logging:
       thymeleaf: INFO
     
 application:
+    initial-data:
+      default:
+        super-role-name: SUPER_ADMIN
+        user: 
+          email: lufy@admin.com
+          password: P@ssw0rd
+          firstName: Monkey D
+          lastName: Lufy
+
     mail:
       verify: 
         expiry: 604800 # sec
-      email-template-path: /Users/prpasn/Desktop/Coding/clean-architecture/admin-manager/email-templates/
+      email-template-path: D:/me/admin-manager-clean-archecture/email-templates/
     frontend:
       url: http://localhost:3000/en/auth/verify-email
     api:

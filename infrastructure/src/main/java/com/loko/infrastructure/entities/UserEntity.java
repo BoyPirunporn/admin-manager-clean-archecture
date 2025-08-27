@@ -20,6 +20,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "users")
 public class UserEntity extends BaseEntity implements UserDetails {
+    @Column(nullable = false,unique = true)
     private String email;
     private String password;
     private String firstName;

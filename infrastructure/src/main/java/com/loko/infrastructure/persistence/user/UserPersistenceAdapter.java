@@ -72,5 +72,10 @@ public class UserPersistenceAdapter implements UserRepositoryPort {
     public Optional<User> findById(String id) {
         return userJpaRepository.findById(UUID.fromString(id)).map(mapper::toDomain);
     }
+
+    @Override
+    public boolean existsByRole_Name(String roleName) {
+        return userJpaRepository.existsByRole_Name(roleName);
+    }
     
 }

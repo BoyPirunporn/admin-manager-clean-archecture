@@ -3,6 +3,7 @@ package com.loko.infrastructure.persistence.menu;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -20,11 +21,11 @@ import com.loko.infrastructure.helper.PageableHelper;
 import com.loko.infrastructure.repositories.MenuJpaRepository;
 
 @Component
-public class MenuRepositoryAdapter implements MenuRepositoryPort {
+public class MenuPresistenceAdapter implements MenuRepositoryPort {
     private final MenuJpaRepository jpaRepository;
     private final MenuPersistenceMapper mapper;
 
-    public MenuRepositoryAdapter(MenuJpaRepository jpaRepository, MenuPersistenceMapper mapper) {
+    public MenuPresistenceAdapter(MenuJpaRepository jpaRepository, MenuPersistenceMapper mapper) {
         this.jpaRepository = jpaRepository;
         this.mapper = mapper;
     }
@@ -32,11 +33,12 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
     @Override
     public List<Menu> findRootMenus() {
         return jpaRepository.findByParentIdIsNullOrderByDisplayOrderAsc().stream()
-                .map(e -> {
-                    System.out.println(e.isGroup());
-                    return mapper.toDomain(e);
-                })
+                .map(mapper::toDomain)
                 .collect(Collectors.toList());
+    }
+    @Override
+    public List<Menu> findAll() {
+        return jpaRepository.findAll().stream().map(mapper::toDomain).collect(Collectors.toList());
     }
 
     // @Override
@@ -82,4 +84,24 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
         throw new UnsupportedOperationException("Unimplemented method 'findMenuWithRoleId'");
     }
 
+    @Override
+    public long count() {
+       return jpaRepository.count();
+    }
+
+    @Override
+    public Menu save(Menu menu){
+        MenuEntity entity = mapper.toEntity(menu);
+        return mapper.toDomain(jpaRepository.save(entity));
+    }
+    @Override
+    public List<Menu> saveAll(List<Menu> menus){
+        List<MenuEntity> entities = menus.stream().map(mapper::toEntity).collect(Collectors.toList());
+        return jpaRepository.saveAll(entities).stream().map(mapper::toDomain).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Menu> findAllWithParent() {
+        return jpaRepository.findAllWithParent().stream().map(mapper::toDomain).collect(Collectors.toList());
+    }
 }

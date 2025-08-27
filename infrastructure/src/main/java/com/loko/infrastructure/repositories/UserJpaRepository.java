@@ -11,6 +11,7 @@ import com.loko.infrastructure.entities.UserEntity;
 
 public interface UserJpaRepository extends JpaRepository<UserEntity,UUID> {
     boolean existsByEmail(String email);
+    boolean existsByRole_Name(String roleName);
 
     Optional<UserEntity> findByEmail(String email);
 

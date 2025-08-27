@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.loko.applications.dto.PageQuery;
 import com.loko.applications.dto.PagedResult;
@@ -19,6 +20,7 @@ import com.loko.infrastructure.helper.PageableHelper;
 import com.loko.infrastructure.repositories.RoleJpaRepository;
 
 @Component
+
 public class RolePersistenceAdapter implements RoleRepositoryPort {
     private final RoleJpaRepository jpaRepository;
     private final RolePersistenceMapper mapper;
@@ -43,6 +45,11 @@ public class RolePersistenceAdapter implements RoleRepositoryPort {
     @Override
     public Optional<Role> findById(String id) {
         return jpaRepository.findById(UUID.fromString(id)).map(mapper::toDomain);
+    }
+
+    @Override
+    public Optional<Role> findByName(String name) {
+        return jpaRepository.findByName(name).map(mapper::toDomain);
     }
 
     @Override
@@ -85,6 +92,22 @@ public class RolePersistenceAdapter implements RoleRepositoryPort {
                 pageResult.getNumber(),
                 pageResult.getSize(),
                 pageResult.isLast());
+    }
+
+    @Override
+    public long count() {
+        return jpaRepository.count();
+    }
+
+    @Override
+    public List<Role> saveAll(List<Role> roles) {
+        List<RoleEntity> entities = roles.stream().map(mapper::toEntity).toList();
+        return jpaRepository.saveAll(entities).stream().map(mapper::toDomain).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Role> findByNameWithPermissions(String name) {
+        return jpaRepository.findByNameWithPermissions(name).map(mapper::toDomain);
     }
 
 }

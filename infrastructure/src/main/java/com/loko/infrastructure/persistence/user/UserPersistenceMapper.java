@@ -19,9 +19,11 @@ import com.loko.infrastructure.persistence.role.RolePersistenceMapper;
 public interface UserPersistenceMapper {
 
     @Mapping(source = "role", target = "authorities", qualifiedByName = "toDomainAuthorities")
+    @Mapping(target = "role.permissions", ignore = true)
     User toDomain(UserEntity entity);
 
     @Mapping(source = "role", target = "authorities", qualifiedByName = "toAuthorities")
+    @Mapping(target = "role.permissions",ignore = true)
     UserEntity toEntity(User domain);
 
     @Named("toDomainAuthorities")

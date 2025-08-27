@@ -22,4 +22,28 @@ public class Menu extends BaseModel{
     private int displayOrder;
     private Menu parent;
     private Set<Menu> children = new TreeSet<>(Comparator.comparingInt(Menu::getDisplayOrder));
+    
+    public Menu(String title, String url, String icon, boolean isVisible, boolean isGroup, int displayOrder) {
+        this.title = title;
+        this.url = url;
+        this.icon = icon;
+        this.isVisible = isVisible;
+        this.isGroup = isGroup;
+        this.displayOrder = displayOrder;
+    }
+
+    public Menu(String title, String url, String icon, boolean isVisible, boolean isGroup, int displayOrder,
+            Menu parent) {
+        this.title = title;
+        this.url = url;
+        this.icon = icon;
+        this.isVisible = isVisible;
+        this.isGroup = isGroup;
+        this.displayOrder = displayOrder;
+        this.parent = parent;
+    }
+
+    
+
+    
 }
