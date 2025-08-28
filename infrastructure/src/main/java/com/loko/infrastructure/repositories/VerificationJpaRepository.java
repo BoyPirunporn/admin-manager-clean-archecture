@@ -9,4 +9,5 @@ import com.loko.infrastructure.entities.VerificationTokenEntity;
 
 public interface VerificationJpaRepository extends JpaRepository<VerificationTokenEntity,UUID> {
     Optional<VerificationTokenEntity> findByToken(String token);
+    boolean existsByToken(String token);
 }

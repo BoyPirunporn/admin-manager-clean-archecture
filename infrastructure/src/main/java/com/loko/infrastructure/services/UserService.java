@@ -38,9 +38,8 @@ public class UserService implements UserUseCase {
     @Value("${application.mail.verify.expiry}")
     private int verifyExpiry;
 
-   
-
-    public UserService(UserRepositoryPort userRepositoryPort, VerificationTokenRepositoryPort verificationTokenRepositoryPort,
+    public UserService(UserRepositoryPort userRepositoryPort,
+            VerificationTokenRepositoryPort verificationTokenRepositoryPort,
             RoleRepositoryPort roleRepositoryPort, EmailSenderRepositoryPort mailSender, UserApiMapper mapper,
             PasswordEncoder passwordEncoder) {
         this.userRepositoryPort = userRepositoryPort;
@@ -61,7 +60,6 @@ public class UserService implements UserUseCase {
                 .orElseThrow(() -> new ResourceNotFoundException("One or more role IDs are invalid."));
 
         User user = mapper.toUser(dto);
-        user.setPassword(passwordEncoder.encode(dto.password()));
         user.setRole(role);
         user.setActive(false);
         user.setEmailVerify(false);
@@ -76,8 +74,9 @@ public class UserService implements UserUseCase {
         verificationTokenRepositoryPort.save(verificationToken);
 
         // send email
-        mailSender.sendVerificationEmail("template-default",saveUser.getEmail(), saveUser.getFirstName() + " " + saveUser.getLastName(), token);
-        
+        mailSender.sendVerificationEmail("template-default", saveUser.getEmail(),
+                saveUser.getFirstName() + " " + saveUser.getLastName(), token);
+
         return mapper.toUserDto(saveUser);
     }
 

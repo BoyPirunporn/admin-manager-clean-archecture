@@ -8,6 +8,7 @@ public class SecurityConstant {
             "/api/v1/auth/login",
             "/api/v1/auth/refresh-token",
             "/api/v1/auth/verify-email/**",
+            "/api/v1/auth/verify-token",
             "/swagger-ui/**",
             "/swagger-ui.html", // ✅ เพิ่ม Swagger UI HTML
             "/v3/api-docs/**", // ✅ อนุญาต API Docs ทั้งหมด

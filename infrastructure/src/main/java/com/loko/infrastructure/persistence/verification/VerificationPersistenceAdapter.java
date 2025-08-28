@@ -35,4 +35,9 @@ public class VerificationPersistenceAdapter implements VerificationTokenReposito
         repository.delete(mapper.toEntity(token));
     }
 
+    @Override
+    public boolean existsByToken(String token) {
+       return repository.existsByToken(token);
+    }
+
 }

@@ -4,10 +4,11 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.loko.applications.dto.ApiBaseResponse;
@@ -15,11 +16,14 @@ import com.loko.applications.dto.ApiResponse;
 import com.loko.applications.dto.auth.AuthRequestDto;
 import com.loko.applications.dto.auth.AuthResponseDto;
 import com.loko.applications.dto.auth.ChangePasswordDto;
+import com.loko.applications.dto.auth.VerifyEmailRequestDto;
+import com.loko.applications.dto.user.VerifyTokenResponseDto;
 import com.loko.applications.ports.in.auth.AuthUseCase;
 import com.loko.applications.ports.in.user.VerificationUseCase;
 import com.loko.domain.exception.UnauthorizeException;
 
 import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("${application.api.version}/auth")
@@ -61,11 +65,16 @@ public class AuthController {
                 .ok(ApiResponse.success("Logged out successfully. Please delete your token on the client side.", 200));
     }
 
-    @PostMapping("/verify-email/{token}")
-    public ResponseEntity<ApiBaseResponse> postMethodName(
-            @PathVariable(name = "token", required = true) String token) {
+    @PostMapping("/verify-email")
+    public ResponseEntity<ApiBaseResponse> postMethodName(@Valid VerifyEmailRequestDto token) {
         verificationUseCase.verifyEmail(token);
         return ResponseEntity.ok(new ApiBaseResponse("Account verified! You can now use the system.",200));
     }
+
+    @GetMapping("/verify-token")
+    public ResponseEntity<ApiResponse<VerifyTokenResponseDto>> getMethodName(@RequestParam(name="token",required = true) String token) {
+        return ResponseEntity.ok(ApiResponse.success(verificationUseCase.verifyToken(token), 200));
+    }
+    
 
 }
