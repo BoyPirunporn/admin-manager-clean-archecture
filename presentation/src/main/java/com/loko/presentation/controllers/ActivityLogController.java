@@ -32,8 +32,10 @@ public class ActivityLogController {
     @GetMapping("/dataTable")
     public ResponseEntity<PagedResult<ActivityLogDto>> dataTable(
             @PageableDefault(size = 10, sort = "createdAt") Pageable pageable,
-            @RequestParam(required = false) String search) {
-                PageQuery query = PageablePresenHelper.buildPageQuery(pageable,search);
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String searchBy
+            ) {
+                PageQuery query = PageablePresenHelper.buildPageQuery(pageable,searchBy,search);
         return ResponseEntity.ok(activityUseCase.dataTableByUserRoleLevelGreaterEqual(query));
     }
 

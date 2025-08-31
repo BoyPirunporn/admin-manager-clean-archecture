@@ -3,13 +3,13 @@ package com.loko.presentation.controllers;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.loko.applications.dto.ApiResponse;
-import com.loko.applications.dto.PageQuery;
 import com.loko.applications.dto.PagedResult;
 import com.loko.applications.dto.role.RoleCreationDto;
 import com.loko.applications.dto.role.RoleDetailDto;
@@ -26,6 +25,7 @@ import com.loko.applications.ports.in.role.RoleUseCase;
 import com.loko.presentation.helper.PageablePresenHelper;
 
 import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("${application.api.version}/roles")
@@ -44,10 +44,12 @@ public class RoleController {
     @GetMapping("/dataTable")
     public ResponseEntity<PagedResult<RoleDto>> datatable(
             @PageableDefault(size = 10, sort = "name") Pageable pageable,
-            @RequestParam(required = false) String search) {
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String searchBy
+            ) {
         // 1. แปลง Pageable (ภาษาของ Spring) ไปเป็น PageQuery (ภาษากลาง)
 
-        return ResponseEntity.ok(roleUseCase.dataTables(PageablePresenHelper.buildPageQuery(pageable, search)));
+        return ResponseEntity.ok(roleUseCase.dataTables(PageablePresenHelper.buildPageQuery(pageable, searchBy,search)));
     }
 
     @GetMapping("{id}")
@@ -59,6 +61,11 @@ public class RoleController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<RoleDto> postMethodName(@Valid @RequestBody RoleCreationDto dto) {
         return ResponseEntity.ok(roleUseCase.createRole(dto));
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<RoleDto> putMethodName(@PathVariable(required = true) String id,@Valid @RequestBody RoleCreationDto dto) {
+        return ResponseEntity.ok(roleUseCase.updateRole(id,dto));
     }
 
 }

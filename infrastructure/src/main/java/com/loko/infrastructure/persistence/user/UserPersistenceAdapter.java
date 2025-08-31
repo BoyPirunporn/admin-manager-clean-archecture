@@ -15,14 +15,14 @@ import com.loko.domain.User;
 import com.loko.infrastructure.entities.UserEntity;
 import com.loko.infrastructure.helper.PageableHelper;
 import com.loko.infrastructure.repositories.UserJpaRepository;
+import com.loko.infrastructure.security.SecurityUtils;
+import com.loko.infrastructure.specification.UserSpecification;
 
 @Component
 public class UserPersistenceAdapter implements UserRepositoryPort {
 
     private final UserJpaRepository userJpaRepository;
     private final UserPersistenceMapper mapper;
-
-    
 
     public UserPersistenceAdapter(UserJpaRepository userJpaRepository, UserPersistenceMapper mapper) {
         this.userJpaRepository = userJpaRepository;
@@ -49,13 +49,14 @@ public class UserPersistenceAdapter implements UserRepositoryPort {
     @Override
     public PagedResult<User> findPageable(PageQuery query) {
         Pageable pageable = PageableHelper.toPageable(query);
-
-        Page<UserEntity> pageResult;
-        if (query.searchTerm() != null && !query.searchTerm().isBlank()) {
-            pageResult = userJpaRepository.findAllByFirstNameContainingIgnoreCaseOrderById(query.searchTerm(), pageable);
-        } else {
-            pageResult = userJpaRepository.findAll(pageable);
-        }
+        int roleLevel = SecurityUtils.getCurrentRole().getLevel();
+        Page<UserEntity> pageResult = userJpaRepository.findAll(UserSpecification.filterCriteria(query),pageable);
+        // if (query.searchTerm() != null && !query.searchTerm().isBlank()) {
+        //     pageResult = userJpaRepository.findAllByFirstNameContainingIgnoreCaseAndRole_LevelGreaterThanEqualOrderById(
+        //             query.searchTerm(), roleLevel, pageable);
+        // } else {
+        //     pageResult = userJpaRepository.findAllByRole_LevelGreaterThanEqualOrderByCreatedAt(roleLevel, pageable);
+        // }
 
         List<User> toDomains = pageResult.getContent().stream().map(mapper::toDomain).toList();
 
@@ -77,5 +78,5 @@ public class UserPersistenceAdapter implements UserRepositoryPort {
     public boolean existsByRole_Name(String roleName) {
         return userJpaRepository.existsByRole_Name(roleName);
     }
-    
+
 }

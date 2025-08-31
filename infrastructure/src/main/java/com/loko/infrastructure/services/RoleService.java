@@ -3,12 +3,17 @@ package com.loko.infrastructure.services;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,22 +39,25 @@ import com.loko.infrastructure.mapper.RoleApiMapper;
 @Service
 @Transactional
 public class RoleService implements RoleUseCase {
-
+    private static final Logger logger = LoggerFactory.getLogger(RoleService.class);
     private final RoleRepositoryPort roleRepositoryPort;
     private final MenuRepositoryPort menuRepository; // Injected for fetching menu details
+    private final CacheManager cacheManager;
 
     private final RoleApiMapper mapper;
     private final PermissionApiMapper permissionMapper;
 
     public RoleService(RoleRepositoryPort roleRepositoryPort, MenuRepositoryPort menuRepository, RoleApiMapper mapper,
-            PermissionApiMapper permissionMapper) {
+            PermissionApiMapper permissionMapper,CacheManager cacheManager) {
         this.roleRepositoryPort = roleRepositoryPort;
         this.menuRepository = menuRepository;
         this.mapper = mapper;
         this.permissionMapper = permissionMapper;
+        this.cacheManager = cacheManager;
     }
 
     @Override
+    @CacheEvict(cacheNames = "role-datatable",allEntries = true)
     public RoleDto createRole(RoleCreationDto dto) {
         if (roleRepositoryPort.existsByName(dto.name())) {
             throw new DuplicateResourceException("Role with name '" + dto.name() + "' already exists.");
@@ -59,6 +67,7 @@ public class RoleService implements RoleUseCase {
         Set<RolePermission> processedPermissions = processPermissions(dto.permissions());
         role.setPermissions(processedPermissions);
         Role saveRole = roleRepositoryPort.save(role);
+        
         return mapper.toRoleDto(saveRole);
 
     }
@@ -70,43 +79,53 @@ public class RoleService implements RoleUseCase {
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + id));
 
         Set<PermissionNodeDto> permissionTree = role.getPermissions().stream()
-        .filter(p -> !p.getMenu().isGroup())
-        .sorted(Comparator.comparingInt(p -> p.getMenu().getDisplayOrder()))
-        .map(p -> {
-            return permissionMapper.toPermissionNodeDto(p, null);
-        }).collect(Collectors.toSet());
+                .filter(p -> !p.getMenu().isGroup())
+                .sorted(Comparator.comparingInt(p -> {
+                    return p.getMenu().getDisplayOrder();
+                }))
+                .map(p -> {
+                    return permissionMapper.toPermissionNodeDto(p, null);
+                }).collect(Collectors.toCollection(LinkedHashSet::new));
 
-        return new RoleDetailDto(role.getId(), role.getName(), role.getDescription(),role.getLevel(), permissionTree);
+        permissionTree.forEach(e -> {
+            logger.info("SORT  NAME {}", e.menuNameEN());
+        });
+
+        return new RoleDetailDto(role.getId(), role.getName(), role.getDescription(), role.getLevel(), permissionTree);
     }
 
-    // private Set<PermissionNodeDto> buildPermissionTree(Set<RolePermission> permissions) {
-    //     if (permissions == null || permissions.isEmpty()) {
-    //         return Collections.emptySet();
-    //     }
-        
-    //     // Group children by their parent's ID
-    //     Map<String, List<RolePermission>> parentToChildrenMap = permissions.stream()
-    //             .filter(p -> p.getMenu().getParent() != null)
-    //             .collect(Collectors.groupingBy(p -> p.getMenu().getParent().getId()));
-
-    //     // Start building the tree from the root permissions (those without a parent)
-    //     return permissions.stream()
-    //             .filter(p -> p.getMenu().getParent() != null)
-    //             .map(rootPermission -> mapToPermissionNodeRecursive(rootPermission, parentToChildrenMap))
-    //             .collect(Collectors.toCollection(LinkedHashSet::new));
+    // private Set<PermissionNodeDto> buildPermissionTree(Set<RolePermission>
+    // permissions) {
+    // if (permissions == null || permissions.isEmpty()) {
+    // return Collections.emptySet();
     // }
 
-    // private PermissionNodeDto mapToPermissionNodeRecursive(RolePermission permission,
-    //         Map<String, List<RolePermission>> parentToChildrenMap) {
-    //     // Find children for the current permission's menu, if any
-    //     Set<PermissionNodeDto> children = parentToChildrenMap
-    //             .getOrDefault(permission.getMenu().getId(), Collections.emptyList())
-    //             .stream()
-    //             // Recursively map each child
-    //             .map(childPermission -> mapToPermissionNodeRecursive(childPermission, parentToChildrenMap))
-    //             .collect(Collectors.toCollection(LinkedHashSet::new));
+    // // Group children by their parent's ID
+    // Map<String, List<RolePermission>> parentToChildrenMap = permissions.stream()
+    // .filter(p -> p.getMenu().getParent() != null)
+    // .collect(Collectors.groupingBy(p -> p.getMenu().getParent().getId()));
 
-    //     return permissionMapper.toPermissionNodeDto(permission, new HashSet<>());
+    // // Start building the tree from the root permissions (those without a parent)
+    // return permissions.stream()
+    // .filter(p -> p.getMenu().getParent() != null)
+    // .map(rootPermission -> mapToPermissionNodeRecursive(rootPermission,
+    // parentToChildrenMap))
+    // .collect(Collectors.toCollection(LinkedHashSet::new));
+    // }
+
+    // private PermissionNodeDto mapToPermissionNodeRecursive(RolePermission
+    // permission,
+    // Map<String, List<RolePermission>> parentToChildrenMap) {
+    // // Find children for the current permission's menu, if any
+    // Set<PermissionNodeDto> children = parentToChildrenMap
+    // .getOrDefault(permission.getMenu().getId(), Collections.emptyList())
+    // .stream()
+    // // Recursively map each child
+    // .map(childPermission -> mapToPermissionNodeRecursive(childPermission,
+    // parentToChildrenMap))
+    // .collect(Collectors.toCollection(LinkedHashSet::new));
+
+    // return permissionMapper.toPermissionNodeDto(permission, new HashSet<>());
     // }
 
     @Override
@@ -115,9 +134,15 @@ public class RoleService implements RoleUseCase {
     }
 
     @Override
-    public RoleDetailDto updateRole(String roleId, RoleCreationDto roleCreationDto) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateRole'");
+    public RoleDetailDto updateRole(String roleId, RoleCreationDto dto) {
+        if (!roleRepositoryPort.existsById(roleId)) {
+            throw new ResourceNotFoundException("Role " + dto.name() + " not found");
+        }
+        Role role = mapper.toRole(dto);
+        role.setId(roleId);
+        Set<RolePermission> processedPermissions = processPermissions(dto.permissions());
+        role.setPermissions(processedPermissions);
+        return mapper.toRoleDetailDto(roleRepositoryPort.save(role));
     }
 
     private Set<RolePermission> processPermissions(Set<PermissionUpdateDto> permissionDtos) {
@@ -164,7 +189,7 @@ public class RoleService implements RoleUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = "role-datatable", key = "#query")
+    @Cacheable(cacheNames = "role-datatable", keyGenerator = "customKeyGenerator")
     public PagedResult<RoleDto> dataTables(PageQuery query) {
         PagedResult<Role> pageResult = roleRepositoryPort.findPaginated(query);
 

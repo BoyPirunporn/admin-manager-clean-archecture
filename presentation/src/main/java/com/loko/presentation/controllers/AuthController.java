@@ -66,7 +66,7 @@ public class AuthController {
     }
 
     @PostMapping("/verify-email")
-    public ResponseEntity<ApiBaseResponse> postMethodName(@Valid VerifyEmailRequestDto token) {
+    public ResponseEntity<ApiBaseResponse> postMethodName(@Valid @RequestBody VerifyEmailRequestDto token) {
         verificationUseCase.verifyEmail(token);
         return ResponseEntity.ok(new ApiBaseResponse("Account verified! You can now use the system.",200));
     }

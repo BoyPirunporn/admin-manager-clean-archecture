@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +16,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import com.loko.applications.jwt.JwtUseCase;
-import com.loko.domain.exception.JwtException;
 import com.loko.domain.exception.UnauthorizeException;
 
 import jakarta.servlet.FilterChain;
@@ -65,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @SuppressWarnings("null") FilterChain filterChain)
             throws ServletException, IOException {
 
-        logger.info("[ REQUEST URI ] {}", request.getRequestURI());
+        logger.info("[ REQUEST URI ] {} [ METHOD ] {}", request.getRequestURI(),request.getMethod());
         if (shouldNotFilter(request)) {
             logger.info("SHOULD NOT FILTER");
             filterChain.doFilter(request, response);

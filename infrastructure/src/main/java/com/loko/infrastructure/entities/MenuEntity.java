@@ -20,6 +20,7 @@ public class MenuEntity extends BaseEntity{
     private String icon;
     private boolean isVisible = false;
     private boolean isGroup = false;
+    
     private int displayOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)

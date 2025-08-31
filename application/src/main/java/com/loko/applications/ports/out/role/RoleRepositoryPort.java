@@ -17,6 +17,7 @@ public interface RoleRepositoryPort {
     List<Role> findAll();
     Set<Role> findAllByIds(Set<String> ids); // Added this method
     boolean existsByName(String name);
+    boolean existsById(String id);
     boolean existsByNameAndIdNot(String name, String id);
     PagedResult<Role> findPaginated(PageQuery page);
     long count();

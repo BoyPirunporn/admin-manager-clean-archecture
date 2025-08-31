@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,24 +34,23 @@ public class UserService implements UserUseCase {
     private final RoleRepositoryPort roleRepositoryPort;
     private final EmailSenderRepositoryPort mailSender;
     private final UserApiMapper mapper;
-    private final PasswordEncoder passwordEncoder;
 
     @Value("${application.mail.verify.expiry}")
     private int verifyExpiry;
 
     public UserService(UserRepositoryPort userRepositoryPort,
             VerificationTokenRepositoryPort verificationTokenRepositoryPort,
-            RoleRepositoryPort roleRepositoryPort, EmailSenderRepositoryPort mailSender, UserApiMapper mapper,
-            PasswordEncoder passwordEncoder) {
+            RoleRepositoryPort roleRepositoryPort, EmailSenderRepositoryPort mailSender, UserApiMapper mapper) {
         this.userRepositoryPort = userRepositoryPort;
         this.verificationTokenRepositoryPort = verificationTokenRepositoryPort;
         this.roleRepositoryPort = roleRepositoryPort;
         this.mailSender = mailSender;
         this.mapper = mapper;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
+    @Transactional
+    @CacheEvict(cacheNames = "users-datatable",allEntries = true)
     public UserDto createUser(UserCreationDto dto) {
         if (userRepositoryPort.existsByEmail(dto.email())) {
             throw new DuplicateResourceException("Email '" + dto.email() + "' is already token.");
@@ -81,6 +81,8 @@ public class UserService implements UserUseCase {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "users-datatable",keyGenerator = "customKeyGenerator")
     public PagedResult<UserDto> getAllUser(PageQuery query) {
         PagedResult<User> pageResult = userRepositoryPort.findPageable(query);
 

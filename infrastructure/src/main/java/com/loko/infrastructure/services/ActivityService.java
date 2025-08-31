@@ -2,6 +2,7 @@ package com.loko.infrastructure.services;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +46,7 @@ public class ActivityService implements ActivityUseCase {
     }
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "activity",keyGenerator = "customKeyGenerator")
     public PagedResult<ActivityLogDto> dataTableByUserRoleLevelGreaterEqual(PageQuery query) {
         PagedResult<ActivityLog> pageResult = repositoryPort.findPageableByUserRoleLevelGreaterThanEqual(query);
         List<ActivityLogDto> toDtos = pageResult.data().stream().map(mapper::toDto).toList();

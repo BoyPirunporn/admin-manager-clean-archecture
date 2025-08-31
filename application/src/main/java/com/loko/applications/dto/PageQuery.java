@@ -5,5 +5,6 @@ public record PageQuery(
     int pageSize,
     String sortBy,
     String sortDirection,
-    String searchTerm
+    String searchTerm,
+    String searchByColumn
 ) {}

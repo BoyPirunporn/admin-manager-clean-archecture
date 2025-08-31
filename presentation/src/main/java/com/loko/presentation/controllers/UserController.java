@@ -1,7 +1,6 @@
 package com.loko.presentation.controllers;
 
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.loko.applications.dto.ApiResponse;
 import com.loko.applications.dto.ApiResponseMessage;
-import com.loko.applications.dto.PageQuery;
 import com.loko.applications.dto.PagedResult;
 import com.loko.applications.dto.user.UserCreationDto;
 import com.loko.applications.dto.user.UserDto;
 import com.loko.applications.ports.in.user.UserUseCase;
+import com.loko.presentation.helper.PageablePresenHelper;
 
 import jakarta.validation.Valid;
 
@@ -37,14 +36,10 @@ public class UserController {
     @GetMapping
     public ResponseEntity<PagedResult<UserDto>> getAllUser(
             @PageableDefault(size = 10, sort = "id") Pageable pageable,
-            @RequestParam(required = false) String search) {
-        PageQuery query = new PageQuery(
-                pageable.getPageNumber(),
-                pageable.getPageSize(),
-                pageable.getSort().stream().findFirst().map(Sort.Order::getProperty).orElse("username"),
-                pageable.getSort().stream().findFirst().map(Sort.Order::getDirection).orElse(Sort.Direction.ASC).name(),
-                search);
-        return ResponseEntity.ok(userUseCase.getAllUser(query));
+            @RequestParam(name="search",required = false) String search,
+            @RequestParam(name="searchBy",required = false) String searchBy) {
+        
+        return ResponseEntity.ok(userUseCase.getAllUser(PageablePresenHelper.buildPageQuery(pageable, searchBy,search)));
     }
 
     @GetMapping("{id}")

@@ -12,16 +12,17 @@ public class PageablePresenHelper {
                 pageable.getPageSize(),
                 pageable.getSort().stream().findFirst().map(Sort.Order::getProperty).orElse(null),
                 pageable.getSort().stream().findFirst().map(Sort.Order::getDirection).orElse(Sort.Direction.ASC).name(),
-                null);
+                null,null);
         return query;
     }
-    public static PageQuery buildPageQuery(Pageable pageable,String search) {
+    public static PageQuery buildPageQuery(Pageable pageable,String column,String search) {
         PageQuery query = new PageQuery(
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
                 pageable.getSort().stream().findFirst().map(Sort.Order::getProperty).orElse(null),
                 pageable.getSort().stream().findFirst().map(Sort.Order::getDirection).orElse(Sort.Direction.ASC).name(),
-                search);
+                search,
+                column);
         return query;
     }
 }

@@ -2,7 +2,8 @@ package com.loko.infrastructure.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,14 +32,17 @@ public class AuthService implements AuthUseCase {
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
     private final RoleUseCase roleUseCase;
+    private final CacheManager cacheManager;
 
     public AuthService(UserRepositoryPort userRepositoryPort, PasswordEncoder passwordEncoder,
-            UserDetailsService userDetailsService, JwtService jwtService, RoleUseCase roleUseCase) {
+            UserDetailsService userDetailsService, JwtService jwtService, RoleUseCase roleUseCase,
+            CacheManager cacheManager) {
         this.userRepositoryPort = userRepositoryPort;
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
         this.jwtService = jwtService;
         this.roleUseCase = roleUseCase;
+        this.cacheManager = cacheManager;
     }
 
     @Override
@@ -76,17 +80,23 @@ public class AuthService implements AuthUseCase {
     }
 
     @Override
-    @CacheEvict(value = "loadUser", key = "#email")
     public void logout(String email) {
         SecurityContextHolder.clearContext();
         logger.info("Evicting cache for user: {}", email);
-
+        cacheManager.getCacheNames().forEach(name -> {
+            Cache cache = cacheManager.getCache(name);
+            if (cache != null) {
+                cache.clear();
+                logger.info("Cleared cache: {}", name);
+            }
+        });
     }
 
     @Override
     public void changePassword(ChangePasswordDto dto) {
-        User user = userRepositoryPort.findByEmail(SecurityUtils.getCurrentUser().getEmail()).orElseThrow(() -> new ResourceNotFoundException("User not found in system."));
-        if(!passwordEncoder.matches(dto.currentPassword(), user.getPassword())){
+        User user = userRepositoryPort.findByEmail(SecurityUtils.getCurrentUser().getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found in system."));
+        if (!passwordEncoder.matches(dto.currentPassword(), user.getPassword())) {
             throw new BadRequestException("Password is incorrect");
         }
         user.setPassword(passwordEncoder.encode(dto.newPassword()));
