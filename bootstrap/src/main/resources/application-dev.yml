@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/admin_db # Make sure this is your DB name
+    url: password # Make sure this is your DB name
     username: postgres
-    password: P@ssw0rd
+    password: password
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -20,8 +20,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: pirunporn02@gmail.com
-    password: papo msas efqr ycqx
+    username: username
+    password: password
     properties:
       mail:
         smtp:
@@ -50,14 +50,14 @@ application:
     mail:
       verify: 
         expiry: 604800 # sec
-      email-template-path: /Users/prpasn/Desktop/Coding/clean-architecture/admin-manager/email-templates/
+      email-template-path: template-email
     frontend:
-      url: http://localhost:3000/en/auth/verify-email
+      url: url
     api:
         version: /api/v1
     security:
       jwt:
-        secret-key: 13pFaaR/NALZzMGy1gmmAzVIDC42e+4e1Qd+9SHbQNs=
+        secret-key: secretkey
         expiration: 900000
         refresh-token:
           expiration: 3600000
